@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Sales.DBContexts;
 using Sales.Repositories.Interfaces;
 using Sales.Repositories;
+using Sales.Services;
+using Sales.Services.Interfaces;
 
 namespace Sales
 {
@@ -38,8 +40,10 @@ namespace Sales
             //services.AddScoped<SalesDb_context>();
             //services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+
             //services.AddControllers();
             //}
+
 
 
 

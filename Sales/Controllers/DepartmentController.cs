@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Sales.Models;
 using Sales.DBContexts;
 using Sales.Repositories.Interfaces;
+using Sales.Services;
+using Sales.Services.Interfaces;
 
 namespace Sales.Controllers
 {
@@ -22,17 +24,18 @@ namespace Sales.Controllers
 
 
         private IDepartmentRepository _departmentRepository;
-
+        private IDepartmentService _departmentService;
         public DepartmentController(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository;
+       
+            _departmentService = new DepartmentService(_departmentRepository);
         }
-
         // GET: Department
-            public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             //return View(await __context.Department.ToListAsync());
-            return View(await _departmentRepository.GetAll());
+            return View(await _departmentService.GetAll());
         }
 
         // GET: Department/Details/5
@@ -45,7 +48,7 @@ namespace Sales.Controllers
 
             //var department = await __context.Department
             //    .FirstOrDefaultAsync(m => m.Id == id);
-            var department = await _departmentRepository.GetById(id);
+            var department = await _departmentService.GetById(id);
             if (department == null)
             {
                 return NotFound();
@@ -73,7 +76,7 @@ namespace Sales.Controllers
                 //__context.Add(department);
                 //await __context.SaveChangesAsync();
 
-                await _departmentRepository.Insert(department);
+                await _departmentService.Insert(department);
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -89,7 +92,7 @@ namespace Sales.Controllers
 
             //var department = await __context.Department.FindAsync(id);
 
-            var department = await _departmentRepository.GetById(id);
+            var department = await _departmentService.GetById(id);
             if (department == null)
             {
                 return NotFound();
@@ -116,7 +119,7 @@ namespace Sales.Controllers
                     //__context.Update(department);
                     //await __context.SaveChangesAsync();
 
-                    await _departmentRepository.Update(department);
+                    await _departmentService.Update(department);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -144,7 +147,7 @@ namespace Sales.Controllers
 
             //var department = await __context.Department
             //    .FirstOrDefaultAsync(m => m.Id == id);
-            var department = await _departmentRepository.GetById(id);
+            var department = await _departmentService.GetById(id);
             if (department == null)
             {
                 return NotFound();
@@ -162,14 +165,14 @@ namespace Sales.Controllers
             //__context.Department.Remove(department);
             //await __context.SaveChangesAsync();
            //var department = _departmentRepository.GetById(id);
-            await _departmentRepository.Delete(id);
+            await _departmentService.Delete(id);
 
             return RedirectToAction(nameof(Index));
         }
 
         private bool DepartmentExists(int id)
         {
-            return _departmentRepository.Exists(id);
+            return _departmentService.Exists(id);
         }
     }
 }
