@@ -7,22 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sales.DBContexts;
 using Sales.Models;
+using Sales.Services.Interfaces;
 
 namespace Sales.Controllers
 {
     public class SellerController : Controller
     {
-        private readonly SalesDbContext _context;
+        private ISellerService _sellerService;
 
-        public SellerController(SalesDbContext context)
+
+        public SellerController(ISellerService sellerService)
         {
-            _context = context;
+            _sellerService = sellerService;
         }
 
         // GET: Seller
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Seller.ToListAsync());
+            return View(await _sellerService.GetAll());
         }
 
         // GET: Seller/Details/5
@@ -33,8 +35,7 @@ namespace Sales.Controllers
                 return NotFound();
             }
 
-            var seller = await _context.Seller
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var seller = await _sellerService.GetById(id);
             if (seller == null)
             {
                 return NotFound();
@@ -58,8 +59,7 @@ namespace Sales.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(seller);
-                await _context.SaveChangesAsync();
+                await _sellerService.Insert(seller);
                 return RedirectToAction(nameof(Index));
             }
             return View(seller);
@@ -73,7 +73,7 @@ namespace Sales.Controllers
                 return NotFound();
             }
 
-            var seller = await _context.Seller.FindAsync(id);
+            var seller = await _sellerService.GetById(id);
             if (seller == null)
             {
                 return NotFound();
@@ -97,8 +97,7 @@ namespace Sales.Controllers
             {
                 try
                 {
-                    _context.Update(seller);
-                    await _context.SaveChangesAsync();
+                   await _sellerService.Update(seller);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,8 +123,7 @@ namespace Sales.Controllers
                 return NotFound();
             }
 
-            var seller = await _context.Seller
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var seller = await _sellerService.GetById(id);
             if (seller == null)
             {
                 return NotFound();
@@ -139,15 +137,14 @@ namespace Sales.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var seller = await _context.Seller.FindAsync(id);
-            _context.Seller.Remove(seller);
-            await _context.SaveChangesAsync();
+            await _sellerService.Delete(id);
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool SellerExists(int id)
         {
-            return _context.Seller.Any(e => e.Id == id);
+            return _sellerService.Exists(id);
         }
     }
 }

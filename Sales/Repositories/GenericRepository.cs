@@ -6,6 +6,9 @@ using System.Linq;
 using Sales.Models;
 using Sales.Repositories.Interfaces;
 using Sales.DBContexts;
+using Sales.Models.Exceptions;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Sales.Repositories
 {
@@ -13,7 +16,6 @@ namespace Sales.Repositories
     {
         protected readonly SalesDbContext _dbContext;
         private DbSet<T> _entities;
-        string errorMessage = string.Empty;
 
         public GenericRepository(SalesDbContext dbContext)
         {
@@ -22,7 +24,6 @@ namespace Sales.Repositories
         }
         public async Task<List<T>> GetAll()
         {
-            //return _entities.AsEnumerable();
             return await _entities.ToListAsync<T>();
         }
         public async Task<T> GetById(int? id)
@@ -32,14 +33,17 @@ namespace Sales.Repositories
             return await _entities.SingleOrDefaultAsync(s => s.Id == id);
         }
 
+        public IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
+        {
+            return _entities.Where(predicate);
+        }
+
         public async Task Insert(T entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
 
             entity.CreatedAt = DateTime.Now;
             await _entities.AddAsync(entity);
-            //entities.Add(entity);
-            //context.SaveChanges();
             await _dbContext.SaveChangesAsync();
         }
         public async Task Update(T entity)
@@ -48,8 +52,6 @@ namespace Sales.Repositories
 
             entity.UpdatedAt = DateTime.Now;
             _dbContext.Update(entity);
-            //context.Update(entity);
-            //context.SaveChanges();
             await _dbContext.SaveChangesAsync();
         }
         public async Task Delete(int? id)
@@ -58,13 +60,8 @@ namespace Sales.Repositories
 
             T entity = await _entities.SingleOrDefaultAsync(s => s.Id == id);
 
-            //var department = await _context.Department.FindAsync(id);
-            //_context.Department.Remove(department);
-            //await _context.SaveChangesAsync();
-            //var department = _departmentRepository.GetById(id);
+            if (entity == null) throw new DomainException("Entity with this ID does not exist");
 
-
-            //await _context.SaveChangesAsync();
             _entities.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }

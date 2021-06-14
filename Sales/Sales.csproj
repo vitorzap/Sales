@@ -18,6 +18,7 @@
     <None Remove="Services\" />
     <None Remove="Services\Interfaces\" />
     <None Remove="Models\Enums\" />
+    <None Remove="Models\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
@@ -27,6 +28,7 @@
     <Folder Include="Services\" />
     <Folder Include="Services\Interfaces\" />
     <Folder Include="Models\Enums\" />
+    <Folder Include="Models\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />

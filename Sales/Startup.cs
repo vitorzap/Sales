@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+
+using Sales.Models;
 using Sales.DBContexts;
 using Sales.Repositories.Interfaces;
 using Sales.Repositories;
@@ -40,8 +42,11 @@ namespace Sales
             //services.AddScoped<SalesDb_context>();
             //services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-
+            services.AddScoped<ISellerRepository, SellerRepository>();
             //services.AddControllers();
+            //services.AddScoped<IGenericService<Department>, GenericService<Department>>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<ISellerService, SellerService>();
             //}
 
 

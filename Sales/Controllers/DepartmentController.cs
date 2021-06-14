@@ -15,21 +15,11 @@ namespace Sales.Controllers
 {
     public class DepartmentController : Controller
     {
-        //private readonly SalesDb_context __context;
-
-        //public DepartmentController(SalesDb_context _context)
-        //{
-        //    __context = _context;
-        //}
-
-
-        private IDepartmentRepository _departmentRepository;
         private IDepartmentService _departmentService;
-        public DepartmentController(IDepartmentRepository departmentRepository)
+
+        public DepartmentController(IDepartmentService departmentService)
         {
-            _departmentRepository = departmentRepository;
-       
-            _departmentService = new DepartmentService(_departmentRepository);
+            _departmentService = departmentService;
         }
         // GET: Department
         public async Task<IActionResult> Index()

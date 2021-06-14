@@ -7,18 +7,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Sales.Models;
 using Sales.DBContexts;
+using System.Linq.Expressions;
 
 namespace Sales.Services
 {
     public class GenericService<T>: IGenericService<T> where T : BaseEntity
     {
-        private readonly IGenericRepository<T> _repository;
+        protected readonly IGenericRepository<T> _repository;
 
 
         public GenericService(IGenericRepository<T> repository)
         {
             _repository = repository;
         }
+
 
         public virtual async Task<List<T>> GetAll()
         {
@@ -40,6 +42,11 @@ namespace Sales.Services
             return department;
 
         }
+        public virtual IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
+        {
+            return _repository.FindBy(predicate);
+        }
+
         public virtual async Task Insert(T entity)
         {
             await _repository.Insert(entity);
